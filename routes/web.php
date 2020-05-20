@@ -27,3 +27,9 @@ Route::post('/member_edit_complete', 'MemberController@update_member');
 Route::get('/member_search_result', function(){
     return view('member_search_result');
 });
+Route::get('/document_add', 'RegisterCatalogController@add_document');
+Route::get('/document_add_confirming', 'RegisterCatalogController@add_document'); //TODO 変える
+Route::post('/document_add_confirming', 'RegisterCatalogController@add_document_check');
+Route::get('/document_add_last_confirming', 'RegisterCatalogController@add_document_check');
+Route::post('/document_add_last_confirming', 'RegisterCatalogController@add_document_last_check');
+Route::post('/document_add_complete', 'RegisterCatalogController@create_document');
