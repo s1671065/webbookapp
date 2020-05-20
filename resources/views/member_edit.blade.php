@@ -4,7 +4,7 @@
 
 @section('content')
 
-<form class="member_edit_form" action="/member_edit_confirming" method="post"></p>
+<form class="member_edit_form" action="/member_edit_confirming" method="post">
   @csrf
   <p><span class="form_items">名前</span><input type="text" name="user_name" value="{{$user_data->user_name}}" required></p>
   @error('user_name')
