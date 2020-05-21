@@ -15,7 +15,13 @@ class RegisterCatalogController extends Controller
     }
 
     public function add_document_check(Request $request){
-      $this->validate($request, Register::$document_add_rules, Register::$document_add_messages);
+      $add_document_validator = Validator::make($request->all(), Register::$document_add_rules, Register::$document_add_messages);
+      if($add_document_validator->fails()){
+        return redirect('/document_add_confirming')
+          ->withErrors($add_document_validator)
+          ->withInput();
+      }
+      // $this->validate($request, Register::$document_add_rules, Register::$document_add_messages);
       $add_document_data = [
         'catalog_number' => $request->catalog_number,
         'catalog_name' => '',
@@ -68,7 +74,13 @@ class RegisterCatalogController extends Controller
     }
 
     public function add_document_last_check(Request $request){
-      $this->validate($request, Catalog::$document_add_rules, Catalog::$document_add_messages);
+      // $this->validate($request, Catalog::$document_add_rules, Catalog::$document_add_messages);
+      $add_document_last_validator = Validator::make($request->all(), Catalog::$document_add_rules, Catalog::$document_add_messages);
+      if($add_document_last_validator->fails()){
+        return redirect('/document_add_confirming')
+          ->withErrors($add_document_last_validator)
+          ->withInput();
+      }
       $add_document_data = $request->all();
       $request->session()->put($add_document_data);
       return view('document_add_last_confirming', compact("add_document_data"));
