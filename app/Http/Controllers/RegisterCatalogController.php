@@ -44,23 +44,21 @@ class RegisterCatalogController extends Controller
         // 入力されたISBNの本がAPIで取得できた場合
         if($data[0] != null){
           // 書籍情報を取得
-          $book = $data[0]->onix;
+          $book = $data[0];
           // 本の情報を代入
-          $add_document_data['catalog_name'] = $book->DescriptiveDetail->TitleDetail->TitleElement->TitleText->content;
+          $add_document_data['catalog_name'] = $book->onix->DescriptiveDetail->TitleDetail->TitleElement->TitleText->content;
           // 複数著者の場合はカンマ区切り
           $authors = '';
-          foreach ($book->DescriptiveDetail->Contributor as $value) {
+          foreach ($book->onix->DescriptiveDetail->Contributor as $value) {
             $authors .= $value->PersonName->content . ',';
           }
           // 末尾のカンマを消去して代入
           $add_document_data['catalog_author'] = substr($authors, 0, -1);
           // 出版社
-          if(isset($book->PublishingDetail->Publisher)){
-            $add_document_data['catalog_publishername'] = $book->PublishingDetail->Publisher->PublisherName;
-          }
+          $add_document_data['catalog_publishername'] = $book->summary->publisher;
           // 出版日
-          if(!empty($book->PublishingDetail->PublishingDate[0]->Date)){
-            $add_document_data['catalog_publication'] = date("Y/m/d",strtotime($book->PublishingDetail->PublishingDate[0]->Date));
+          if(!empty($book->onix->PublishingDetail->PublishingDate[0]->Date)){
+            $add_document_data['catalog_publication'] = date("Y/m/d",strtotime($book->onix->PublishingDetail->PublishingDate[0]->Date));
           }
         }
       }

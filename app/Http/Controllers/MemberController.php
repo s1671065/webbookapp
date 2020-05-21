@@ -29,7 +29,7 @@ class MemberController extends Controller
       //
       $request->session()->put($edit_member_data);
       // 教科書p219参考
-      $user_id = 1; # あとで変える
+      $user_id = 1; //TODO あとで変える
       $param = [
         'user_name' => $request->user_name,
         'user_address' => $request->user_address,
