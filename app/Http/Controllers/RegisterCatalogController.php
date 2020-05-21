@@ -54,10 +54,14 @@ class RegisterCatalogController extends Controller
           }
           // 末尾のカンマを消去して代入
           $add_document_data['catalog_author'] = substr($authors, 0, -1);
-          // 出版日
-          $add_document_data['catalog_publishername'] = $book->PublishingDetail->Publisher->PublisherName;
           // 出版社
-          $add_document_data['catalog_publication'] = date("Y/m/d",strtotime($book->PublishingDetail->PublishingDate[0]->Date));
+          if(isset($book->PublishingDetail->Publisher)){
+            $add_document_data['catalog_publishername'] = $book->PublishingDetail->Publisher->PublisherName;
+          }
+          // 出版日
+          if(!empty($book->PublishingDetail->PublishingDate[0]->Date)){
+            $add_document_data['catalog_publication'] = date("Y/m/d",strtotime($book->PublishingDetail->PublishingDate[0]->Date));
+          }
         }
       }
       // $request->all();
