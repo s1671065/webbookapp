@@ -6,6 +6,7 @@
 
 <form class="member_edit_form" action="/member_edit_confirming" method="post">
   @csrf
+  <input type="hidden" name="user_id" value="{{$user_data->user_id}}">
   <p><span class="form_items">名前</span><input type="text" name="user_name" value="{{$user_data->user_name}}" required></p>
   @error('user_name')
       <span class="errorMsg">{{$message}}</span>

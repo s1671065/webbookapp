@@ -11,6 +11,15 @@
   .form_items{
     margin-right: 2rem;
   }
+  table.document_result{
+    margin-left: 1.5rem;
+    table-layout: fixed;
+  }
+  table.document_result th, table.document_result td{
+    padding-right: 0.8rem;
+    padding-left: 0.3rem;
+    width: 100%;
+  }
   table {
     margin-left: 250px;
   }
@@ -22,6 +31,7 @@
   table td{
     width: 150px;
   }
+
   input {
     /* 角丸 */
     -moz-border-radius: 5px;

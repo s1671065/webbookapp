@@ -10,20 +10,46 @@ use Validator;
 
 class RegisterCatalogController extends Controller
 {
+    //岩下さん
+    public function remove_document(Request $request)
+    {
+    $catalog_id = 1; //$request
+    $item = DB::table('registers')->join('catalogs','registers.catalog_number','=','catalogs.catalog_number')
+    ->where('registers.catalog_id',$catalog_id)->first();
+    return view('document_delete',['item'=>$item]);
+    }
+
+    public function delete_document(Request $request)
+    {
+    //$validator = validate::make($request->all(),$document_delete_rules,$document_delete_messages);
+    $this->validate($request, Register::$document_delete_rules, Register::$document_delete_messages);
+    //廃棄年月日と備考を追記
+    $param = ['disposal_date' => $request -> disposal_date,
+            'catalog_remark' => $request -> catalog_remark,];
+    $data = DB::table('registers')->where('catalog_id', $request->catalog_id)->update($param);
+    return view('document_delete_complete');
+    }
+
+    // 杉澤
     public function add_document(){
       return view('document_add');
     }
 
     public function add_document_check(Request $request){
+      if(session('catalog_number') != null){
+        $catalog_number = session('catalog_number');
+      }
       $add_document_validator = Validator::make($request->all(), Register::$document_add_rules, Register::$document_add_messages);
       if($add_document_validator->fails()){
         return redirect('/document_add_confirming')
           ->withErrors($add_document_validator)
           ->withInput();
       }
+      $catalog_number = $request->catalog_number;
+
       // $this->validate($request, Register::$document_add_rules, Register::$document_add_messages);
       $add_document_data = [
-        'catalog_number' => $request->catalog_number,
+        'catalog_number' => $catalog_number,
         'catalog_name' => '',
         'catalog_code' => '',
         'catalog_author' => '',
@@ -31,17 +57,17 @@ class RegisterCatalogController extends Controller
         'catalog_publication' => '',
       ];
       // 入力したISBNの本が既にcatalogsテーブルにある場合はその情報を取ってくる
-      // catalogsテーブルにはない場合、google books APIから情報を取ってこれるなら取ってくる
+      // catalogsテーブルにはない場合、APIから情報を取ってこれるなら取ってくる
       // API使用について参考にした記事(https://miyachi-web.com/google-books-apis/)
-      if (DB::table('catalogs')->where('catalog_number', $request->catalog_number)->exists()){
-        $data = DB::table('catalogs')->where('catalog_number', $request->catalog_number)->first();
+      if (DB::table('catalogs')->where('catalog_number', $catalog_number)->exists()){
+        $data = DB::table('catalogs')->where('catalog_number', $catalog_number)->first();
         $add_document_data['catalog_name'] = $data->catalog_name;
         $add_document_data['catalog_code'] = $data->catalog_code;
         $add_document_data['catalog_author'] = $data->catalog_author;
         $add_document_data['catalog_publishername'] = $data->catalog_publishername;
         $add_document_data['catalog_publication'] = $data->catalog_publication;
       } else {
-        $isbn = $request->catalog_number;
+        $isbn = $catalog_number;
         // 情報取得
         $url = 'https://api.openbd.jp/v1/get?isbn=' . $isbn;
         $json = file_get_contents($url);
@@ -77,9 +103,8 @@ class RegisterCatalogController extends Controller
       // $this->validate($request, Catalog::$document_add_rules, Catalog::$document_add_messages);
       $add_document_last_validator = Validator::make($request->all(), Catalog::$document_add_rules, Catalog::$document_add_messages);
       if($add_document_last_validator->fails()){
-        return redirect('/document_add_confirming')
-          ->withErrors($add_document_last_validator)
-          ->withInput();
+        $add_document_data['catalog_number'] = $request->catalog_number;
+        return redirect()->back()->withErrors($add_document_last_validator)->withInput()->with('catalog_number', $request->catalog_number);
       }
       $add_document_data = $request->all();
       $request->session()->put($add_document_data);
@@ -113,5 +138,31 @@ class RegisterCatalogController extends Controller
       $add_document_data = $request->all();
       $request->session()->put($add_document_data);
       return view('document_add_complete', compact("add_document_data"));
+    }
+
+    //本間さん
+    //資料検索機能
+    public function search_document(){
+     return view('document_search');
+    }
+
+    public function find_document(Request $request){
+     ////catalogsテーブルから検索する
+     $catalog=Catalog::where('catalog_name', 'like','%'.$request->catalog_name.'%')->get();
+     return view('document_search_result',['catalog_name'=>$catalog]);
+    }
+
+    //資料変更機能
+    public function edit_document(){
+     return view('document_change');
+    }
+
+    // public function (Request $change){
+    //   //catalogテーブルを変更する
+    //   $remark_text=$change::all();
+    //   return view('document_change_confirming',compact('remark_text'));
+
+    public function edit_document_check(){
+     return view('document_change_confirming');
     }
 }

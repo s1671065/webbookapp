@@ -5,7 +5,7 @@
     <title>@yield('title')</title>
     <style media="screen">
       body {
-        width: 800px;
+        width: 1000px;
         margin: auto;
         margin-top: 0px;
         color: #222222;
@@ -13,13 +13,14 @@
       .header {
         background: linear-gradient(lightgray, white);
         padding-top: 1px;
-        width: 800px;
+        width: 1000px;
         /* position:fixed; */
         position:sticky;
         top:0;
       }
       .content {
         /* margin-top: 2rem; */
+        padding-left: 3rem;
         margin-bottom: 2rem;
         /* padding-top: 146px; */
       }
@@ -38,6 +39,9 @@
         color: #4B4E6D;
         text-decoration: none;
         padding-left: 1rem;
+      }
+      .header h1 a:hover{
+        color: #262746;
       }
       .header h3 {
         padding-left: 2rem;
@@ -59,7 +63,7 @@
         border-radius: 5px;
       }
       .menu_wrap {
-        margin-left: 2rem;
+        /* margin-left: 2rem; */
       }
       .menu_wrap button {
         margin-right: 3px;
