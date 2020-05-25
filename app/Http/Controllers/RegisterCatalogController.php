@@ -38,14 +38,15 @@ class RegisterCatalogController extends Controller
     public function add_document_check(Request $request){
       if(session('catalog_number') != null){
         $catalog_number = session('catalog_number');
+      }else{
+        $add_document_validator = Validator::make($request->all(), Register::$document_add_rules, Register::$document_add_messages);
+        if($add_document_validator->fails()){
+          return redirect('/document_add_confirming')
+            ->withErrors($add_document_validator)
+            ->withInput();
+        }
+        $catalog_number = $request->catalog_number;
       }
-      $add_document_validator = Validator::make($request->all(), Register::$document_add_rules, Register::$document_add_messages);
-      if($add_document_validator->fails()){
-        return redirect('/document_add_confirming')
-          ->withErrors($add_document_validator)
-          ->withInput();
-      }
-      $catalog_number = $request->catalog_number;
 
       // $this->validate($request, Register::$document_add_rules, Register::$document_add_messages);
       $add_document_data = [
